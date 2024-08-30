@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automate Tab Interaction</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    form {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      width: 320px;
+      text-align: center;
+    }
+
+    h3 {
+      margin: 0;
+      padding: 10px 0;
+      color: #333333;
+      font-size: 1.5em;
+      letter-spacing: 1px;
+      background-color: #f0f0f0;
+      border-radius: 8px;
+    }
+
+    textarea,
+    input[type="text"],
+    input[type="file"] {
+      width: 90%;
+      padding: 12px;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #f7f7f7;
+      color: #999999;
+      font-size: 12px;
+      height: 50px;
+      /* Increased height for the textarea */
+    }
+
+    textarea::placeholder,
+    input::placeholder {
+      color: #999999;
+      font-size: 12px;
+    }
+
+    textarea:focus,
+    input[type="text"]:focus,
+    input[type="file"]:focus {
+      outline: none;
+      box-shadow: 0 0 5px #4CAF50;
+      border-color: #4CAF50;
+    }
+
+    button {
+      width: 50%;
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    button:active {
+      background-color: #3e8e41;
+    }
+  </style>
+</head>
+
+<body>
+  <form id="rr-form" action="post">
+    <h3>Review Ratings Audit</h3>
+
+    <textarea id="textarea_asin" placeholder="Enter your ASIN...">B0CYX2WL19
+    </textarea>
+    <input id="excel_asin" type="file" placeholder="Upload your Excel file">
+    
+    <button type="submit" id="start">Start</button>
+    <script src="popup.js"></script>
+    <script src="xlsx.full.min.js"></script>
+  </form>
+</body>
+
+</html>
