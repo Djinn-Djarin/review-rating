@@ -1,22 +1,21 @@
-document.getElementById('rr-form').addEventListener('submit', function (event) {
+document.getElementById('form-id-c8s').addEventListener('submit', function (event) {
   event.preventDefault();
-  let asins_textarea = document.getElementById('textarea_asin').value.trim().split('\n')
-  console.log(asins_textarea);
+  let textarea_id_65e_NS = document.getElementById('textarea_id_65e').value.trim().split('\n')
+  console.log(textarea_id_65e_NS);
 
-  
-  if (asins_textarea[0] !=="") {
-console.log('hyyy');
+
+  if (textarea_id_65e_NS[0] !== "") {
+    console.log('hyyy');
 
     chrome.runtime.sendMessage({
-      message: "urlData_textArea",
-      data: asins_textarea
+      message: "msg from popup", data: textarea_id_65e_NS
     })
   }
 
   else {
     console.log('yo');
-    
-    let asins_excel = document.getElementById('excel_asin')
+
+    let asins_excel = document.getElementById('input_id_ii2')
     const file = asins_excel.files[0]
     if (file) {
       const reader = new FileReader();
@@ -26,24 +25,20 @@ console.log('hyyy');
           console.log('hyy');
           const data = new Uint8Array(e.target.result);
           console.log(data);
-          
+
           const workbook = XLSX.read(data, { type: 'array' });
           console.log(workbook);
-          
 
-          // Assuming the first sheet is the one you want to read
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
           console.log(workbook);
-          
 
-          // Convert the worksheet to JSON
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
           console.log(jsonData);
 
           chrome.runtime.sendMessage({
-            message: "urlData_file",
-            excel: jsonData
+            data: jsonData,
+            message: "msg from popup",
           })
         } catch (error) {
           console.error("Error reading file:", error);

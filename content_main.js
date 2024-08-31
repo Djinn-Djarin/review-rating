@@ -72,3 +72,127 @@
 // }
 // console.log(send_obj)
 // chrome.runtime.sendMessage({ action: 'send_data', userText: send_obj });
+
+// ***************************************************************************************************
+
+
+// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+//     if (request.message === 'startExtraction') {
+//         clickMostRecentAndExtractReviews();
+//     }
+// });
+
+// function clickMostRecentAndExtractReviews() {
+//     let dropDown = document.querySelector('#cm-cr-sort-dropdown');
+//     dropDown.click()
+//     if (dropDown) {
+//         const mostRecentOption = dropDown.querySelector('option[value="recent"]');
+//         if (mostRecentOption) {
+//             mostRecentOption.selected = true;
+//             dropDown.dispatchEvent(new Event('change')); 
+
+//             console.log('Most recent option selected.');
+
+//             setTimeout(() => {
+//                 extractReviewDetails();
+//             }, 5000); 
+//         } else {
+//             console.error('Most recent option not found.');
+//         }
+//     } else {
+//         console.error('Review dropdown not found.');
+//     }
+// }
+
+// function extractReviewDetails() {
+//     let reviewElements = document.querySelectorAll('.review'); 
+
+//     if (reviewElements.length > 0) {
+//         let reviews = [];
+//         reviewElements.forEach((reviewElement) => {
+//             let ratingElement = reviewElement.querySelector('.review-rating'); 
+//             let commentElement = reviewElement.querySelector('.review-text-content'); 
+//             let customerNameElement = reviewElement.querySelector('.a-profile-name'); 
+
+//             let rating = ratingElement ? ratingElement.innerText.trim() : 'No rating';
+//             let comment = commentElement ? commentElement.innerText.trim() : 'No comment';
+//             let customerName = customerNameElement ? customerNameElement.innerText.trim() : 'No customer name';
+
+//             reviews.push({
+//                 customerName: customerName,
+//                 rating: rating,
+//                 comment: comment
+//             });
+//         });
+
+//         console.log('Extracted Reviews:', reviews);
+
+//         chrome.runtime.sendMessage({ message: 'reviewsExtracted', data: reviews });
+//     } else {
+//         console.error('No reviews found on the page.');
+//     }
+// }
+
+
+// ******************************************************
+
+// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+//     if (request.message === 'startExtraction') {
+//         clickReviewLink();
+//     }
+// });
+
+// function clickReviewLink() {
+//     let reviewLink = document.querySelector('#cm-cr-sort-dropdown');
+//     if (reviewLink) {
+//         reviewLink.click();
+
+//         // Observe for changes in the DOM to detect when the dropdown is loaded
+//         const observer = new MutationObserver((mutations, obs) => {
+//             let mostRecent = document.querySelector('select#cm-cr-sort-dropdown');
+            
+//             if (mostRecent) {
+//                 // Stop observing once the element is found
+//                 obs.disconnect();
+
+//                 // Simulate a user interaction with the dropdown
+//                 mostRecent.value = 'recent'; // Ensure this value matches the correct option
+//                 mostRecent.dispatchEvent(new Event('change', { bubbles: true }));
+
+//                 // Wait for the reviews to update after selecting 'Most Recent'
+//                 setTimeout(() => {
+//                     extractReviews();
+//                 }, 2000); // Adjust delay as necessary for the page to update
+//             }
+//         });
+
+//         observer.observe(document.body, {
+//             childList: true,
+//             subtree: true
+//         });
+//     } else {
+//         console.error('Review link not found.');
+//     }
+// }
+
+// function extractReviews() {
+//     let reviewsContainer = document.getElementById('cm-cr-dp-review-list');
+//     if (reviewsContainer) {
+//         let reviews = [];
+//         let reviewElements = reviewsContainer.querySelectorAll('.a-section.review.aok-relative');
+
+//         reviewElements.forEach(reviewElement => {
+//             let reviewText = reviewElement.querySelector('.review-text-content').innerText.trim();
+//             let reviewRating = reviewElement.querySelector('.review-rating .a-icon-alt').innerText.trim();
+//             reviews.push({ rating: reviewRating, text: reviewText });
+//         });
+
+//         console.log('Extracted Reviews:', reviews);
+
+//         // Optionally, send the extracted reviews back to the background script
+//         chrome.runtime.sendMessage({ message: 'reviewsExtracted', data: reviews });
+//     } else {
+//         console.error('Reviews container not found.');
+//     }
+// }
+

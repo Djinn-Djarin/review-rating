@@ -1,52 +1,56 @@
-// Listen for messages from the background script
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.message === 'clickReviewLink') {
+    if (request.message === 'startExtraction') {
         clickReviewLink();
-    } else if (request.message === 'handlePagination') {
-        handlePagination();
     }
 });
 
-function clickReviewLink() {
-    let reviewLink = document.querySelector('a[data-hook="see-all-reviews-link-foot"]');
-    if (reviewLink) {
-        reviewLink.click();
-    } else {
-        console.error('Review link not found.');
-    }
-}
+function clickReviewLink() {   
 
-function handlePagination() {
-    extractReviews();
+        // Observe for changes in the DOM to detect when the dropdown is loaded
+        const observer = new MutationObserver((mutations, obs) => {
+            let mostRecent = document.querySelector('select#cm-cr-sort-dropdown');
+            
+            if (mostRecent) {
+                // Stop observing once the element is found
+                obs.disconnect();
 
-    let nextPageLink = document.querySelector('ul.a-pagination .a-last a');
-    if (nextPageLink) {
-        nextPageLink.click();
+                // Simulate a user interaction with the dropdown
+                mostRecent.value = 'recent'; // Ensure this value matches the correct option
+                mostRecent.dispatchEvent(new Event('change', { bubbles: true }));
 
-        chrome.runtime.sendMessage({ message: 'paginationClicked' }, (response) => {
-            if (response && response.success) {
-                console.log('Next page clicked, waiting for it to load...');
+                // Wait for the reviews to update after selecting 'Most Recent'
+                setTimeout(() => {
+                    extractReviews();
+                }, 2000); // Adjust delay as necessary for the page to update
+            } else {
+                console.error('Most recent option not found.');
             }
         });
-    } else {
-        console.log('No more pages.');
-    }
-}
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    } 
 
 function extractReviews() {
-    let reviews = document.querySelectorAll('.review-text-content');
-    let reviewDetails = [];
+    let reviewsContainer = document.getElementById('cm-cr-dp-review-list');
+    
+    if (reviewsContainer) {
+        let reviews = [];
+        let reviewElements = reviewsContainer.querySelectorAll('.a-section.review.aok-relative');
 
-    reviews.forEach((review, index) => {
-        reviewDetails.push(`Review ${index + 1}: ${review.innerText}`);
-    });
+        reviewElements.forEach(reviewElement => {
+            let reviewText = reviewElement.querySelector('.review-text-content').innerText.trim();
+            let reviewRating = reviewElement.querySelector('.review-rating .a-icon-alt').innerText.trim();
+            reviews.push({ rating: reviewRating, text: reviewText });
+        });
 
-    if (reviewDetails.length > 0) {
-        console.log('Reviews on this page:', reviewDetails.join('\n\n'));
+        console.log('Extracted Reviews:', reviews);
+
+        chrome.runtime.sendMessage({ message: 'reviewsExtracted', data: reviews });
     } else {
-        console.log('No reviews found on this page.');
+        console.error('Reviews container not found.');
     }
-
-    // Optionally, send the extracted reviews back to the background script
-    chrome.runtime.sendMessage({ message: 'reviewsExtracted', data: reviewDetails });
 }
